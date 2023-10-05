@@ -163,3 +163,4 @@ logfile.log
 
 js/node_modules
 .idea
+openapi.key
