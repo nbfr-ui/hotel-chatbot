@@ -1,0 +1,1 @@
+OPENAI_API_KEY=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 python ./server.py
