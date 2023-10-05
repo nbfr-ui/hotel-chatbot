@@ -34,11 +34,7 @@ class ChatBot:
             messages: list
     ) -> dict:
         """This method receives the chat history and a session info and generates a chat response"""
-        logging.info(f"Enter continue_chat")
-        last_message = messages[-1]
-
-        if len(last_message["content"]) > 400:
-            return {'text': "Your message is too long. Please provide a shorter text", 'flag': None}
+        logging.debug(f"Enter continue_chat")
 
         system_text = f"""{task_description}
             This is some context information about the hotel: 
@@ -54,9 +50,9 @@ class ChatBot:
         chat_control_msg = self.control_flow_manager.handle_state(messages, next_response_from_bot,
                                                                   self.chat_gpt_adapter)
 
-        if chat_control_msg['msg_to_user'] is not None:
-            return {'text': chat_control_msg['msg_to_user'], 'flag': chat_control_msg['flag']}
-        elif chat_control_msg['msg_to_bot'] is not None:
-            messages += [{"role": "system", "content": chat_control_msg['msg_to_bot']}]
+        if chat_control_msg.msg_to_user is not None:
+            return {'text': chat_control_msg.msg_to_user, 'flag': chat_control_msg.flag}
+        elif chat_control_msg.msg_to_bot is not None:
+            messages += [{"role": "system", "content": chat_control_msg.msg_to_bot}]
             return self.continue_chat(messages)
         return {'text': next_response_from_bot, 'flag': None}

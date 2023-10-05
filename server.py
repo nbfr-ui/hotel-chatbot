@@ -52,10 +52,13 @@ session_store = {}
 @app.post("/chat/", response_model=TextResponse)
 async def send_msg(msg: Message):
     """Received messages from the user and send a text response"""
+    logging.info(f"/chat: {msg.text}")
+    if len(msg.text) > 400:
+        return {'text': "Your message is too long. Please provide a shorter text", 'flag': None}
+
     if msg.sessionId not in session_store:
         session_store[msg.sessionId] = []
     session_msg = session_store[msg.sessionId]
-    logging.info(f"/chat: {msg.text}")
     session_msg.append({"role": "user", "content": msg.text})
 
     response = chat_bot.continue_chat(session_msg)
@@ -92,5 +95,6 @@ if __name__ == "__main__":
                 logging.info("Stopping docker container...")
                 container.stop()
                 logging.info("Done...")
-            except Exception:
+            except Exception as e:
+                logging.error("Error stopping docker container", e)
                 pass

@@ -162,3 +162,4 @@ cython_debug/
 logfile.log
 
 js/node_modules
+.idea
