@@ -27,7 +27,7 @@ class ControlFlowManager:
     state = State()
 
     booking_form_query = """List all booking-relevant information already provided by me as table with exactly two columns 
-        and 6 rows of the form:
+        and 7 rows of the form:
                 Date of arrival | <date of arrival>
                 Duration of stay | <number of nights>
                 Number of guests | <number of guests>
