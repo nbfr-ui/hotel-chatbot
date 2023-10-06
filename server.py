@@ -22,30 +22,6 @@ class TextResponse(BaseModel):
     flag: None | str
 
 
-dummy_messages = [
-    {"role": "user", "content": "4th of October"},
-    {"role": "assistant", "content": "How many nights to you stay?"},
-    {"role": "user", "content": "2"},
-    {"role": "assistant", "content": "And how many guests will come?"},
-    {"role": "user", "content": "2"},
-    {"role": "assistant", "content": "Do you wish to have breakfast included"},
-    {"role": "user", "content": "Sure!"},
-    {"role": "assistant", "content": "What's your name?"},
-    {"role": "user", "content": "Detlef Dödel"},
-    {"role": "assistant", "content": "What's your email address?"},
-]
-
-dummy_messages2 = [
-    {"role": "user", "content": "4th of October"},
-    {"role": "assistant", "content": "How many nights to you stay?"},
-    {"role": "user", "content": "2"},
-    {"role": "assistant", "content": "And how many guests will come?"},
-    {"role": "user", "content": "2"},
-    {"role": "assistant", "content": "Do you wish to have breakfast included"},
-    {"role": "user", "content": "Sure!"},
-    {"role": "assistant", "content": "What's your name and email?"}
-]
-
 session_store = {}
 
 
