@@ -27,7 +27,7 @@ session_store = {}
 
 @app.post("/chat/", response_model=TextResponse)
 async def send_msg(msg: Message):
-    """Received messages from the user and send a text response"""
+    """Receives messages from the user and sends a text response"""
     logging.info(f"/chat: {msg.text}")
     if len(msg.text) > 400:
         return {'text': "Your message is too long. Please provide a shorter text", 'flag': None}
