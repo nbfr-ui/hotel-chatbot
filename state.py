@@ -6,7 +6,7 @@ class StateEntry:
         self.mandatory = mandatory
 
     raw_value: str | None
-    value: any | None
+    value: any
 
 
 class State:
