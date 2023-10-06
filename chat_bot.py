@@ -33,7 +33,7 @@ class ChatBot:
             self,
             messages: list
     ) -> dict:
-        """This method receives the chat history and a session info and generates a chat response"""
+        """This method receives the chat history and generates a chat response"""
         logging.debug(f"Enter continue_chat")
 
         system_text = f"""{task_description}
