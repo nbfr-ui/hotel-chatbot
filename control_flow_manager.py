@@ -79,6 +79,7 @@ class ControlFlowManager:
         Do you wish to confirm the booking?"""
 
     def _find_missing_info(self, state: State) -> str:
+        """Returns the label of any missing mandatory field"""
         missing = list(filter(lambda entry: entry.value is None and entry.mandatory,
                               state.__dict__.values()))
         return missing[0].label if len(missing) > 0 else None
