@@ -10,6 +10,7 @@ class StateEntry:
 
 
 class State:
+    """Holds the most important information about the state of the conversation with the guest"""
     def __init__(self):
         self.date_of_arrival = StateEntry('time', ['date', 'arrival'], 'Date of arrival', True)
         self.duration_of_stay = StateEntry('duration', ['duration'], 'Duration of stay', True)
