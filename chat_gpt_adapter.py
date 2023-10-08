@@ -1,5 +1,4 @@
 import logging
-
 import backoff
 import openai
 
@@ -26,6 +25,10 @@ class ChatGptAdapter:
                           max_time=10)
     def _try_chat_completion(self, messages, functions=None, temperature=0.5,
                              model='gpt-3.5-turbo-0613') -> ChatGPTResponse:
+        """ Sadly, chatGPT 'hangs' sometimes and there is no response for many minutes
+        As a workaround for this issue backoff is used to abort a request and retry upon failure.
+        """
+
         # openAI expects to find a file openapi.key in the root folder of the project containing the API key
         openai.api_key_path = './openapi.key'
 

@@ -16,6 +16,7 @@ class ChatControlMsg:
     def __str__(self):
         return f"msg_to_user: {self.msg_to_user}, msg_to_bot: {self.msg_to_bot}, flag: {self.flag}"
 
+
 class ControlFlowManager:
     """The control flow manager makes sure the chat proceeds as intended.
     It extracts and validates information given by ChatGPT in text form.
@@ -23,7 +24,6 @@ class ControlFlowManager:
     or do nothing"""
     booking_information_validator = BookingInformationValidator()
     data_extractor = DataExtractor()
-
 
     structured_data_query = """List all booking-relevant information already provided by the user as table with exactly two columns 
         and 7 rows of the form:
@@ -89,12 +89,11 @@ class ControlFlowManager:
             {"role": "user", "content": self.structured_data_query})
 
         # structured data from ChatGPT is requested via a fine-tunes model
-        booking_info_table = adapter.chat_completion(copy_of_chat, None,0.2, adapter.structured_query_model).content
+        booking_info_table = adapter.chat_completion(copy_of_chat, None, 0.2, adapter.structured_query_model).content
         logging.info(booking_info_table)
-        # print(messages + [ {"role": "user", "content": self.structured_data_query}] + [{"role": "assistant", "content": booking_info_table}])
 
         bot_is_showing_booking_summary = adapter.chat_completion(
-            [{"role": "user", "content": self._last_msg_query(next_msg_from_bot)}], None,0.2).content
+            [{"role": "user", "content": self._last_msg_query(next_msg_from_bot)}], None, 0.2).content
 
         logging.info("Does the bot want to show a booking summary? " + bot_is_showing_booking_summary)
 
@@ -123,7 +122,7 @@ class ControlFlowManager:
         response = ChatControlMsg()
 
         if (about_to_show_booking_summary or user_just_confirmed_booking) and missing_info is not None:
-            response.msg_to_bot = f"Ask me the following information: {missing_info}"
+            response.msg_to_bot = f"Ask me for following information: {missing_info}"
         elif user_just_confirmed_booking:
             response.msg_to_user = f"Thank you for choosing our hotel. A booking confirmation was sent to {state.email_address.raw_value}. Have a great day!"
             response.flag = 'booking_finished'

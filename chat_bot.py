@@ -22,7 +22,9 @@ hotel_information = """Name of the hotel: Hotel Royal
 Address: Main square, Madrid, Spain
 Check in time: 2pm, check out time: 10am.
 Room sized: the hotel offers double bed standard rooms exclusively. The maximal number of guests for such a room is 3.
-Breakfast: $10 per guest per night. The breakfast offers several juices, bread, coffee and boiled eggs.
+It is not possible to book for more than 3 guests. If there are more than 3 guests the user needs to make two separate bookings.
+Breakfast: $10 per guest per night. The breakfast offers orange and apple juice, bread, coffee, boiled eggs, cheese,
+butter, honey and marmalade.
 Facilities: a small gym and sauna.
 Animals are not allowed.
 Price per night: about $100. A accurate price will be given at the end of the booking process."""
@@ -99,6 +101,7 @@ class ChatBot:
             )
             next_response_from_bot = self.chat_gpt_adapter.chat_completion(msg_temp, None, 0.5,
                                                                            self.chat_gpt_adapter.booking_model)
+        print(next_response_from_bot)
         session_info.state = self.control_flow_manager.extract_state(messages, next_response_from_bot.content,
                                                                      self.chat_gpt_adapter)
         chat_control_msg = self.control_flow_manager.handle_state(session_info.state)
