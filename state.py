@@ -4,9 +4,8 @@ class StateEntry:
         self.keywords = keywords
         self.label = label
         self.mandatory = mandatory
-
-    raw_value: str | None
-    value: any
+        self.value = None
+        self.raw_value = None
 
 
 class State:
