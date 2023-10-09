@@ -40,7 +40,7 @@ async def send_msg(msg: Message):
 
     response = chat_bot.continue_chat(session_msg)
     session_msg.append({"role": "assistant", "content": response['text']})
-    logging.info(json.dumps(session_msg))
+    logging.debug("Chat history: " + json.dumps(session_msg))
     logging.info(f"/chat: response: {response}")
     return response
 

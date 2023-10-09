@@ -40,7 +40,7 @@ class StateExtractor:
             {"role": "user", "content": self.structured_data_query})
 
         booking_info_table = adapter.chat_completion(copy_of_chat, 0.2, adapter.structured_query_model).content
-        logging.debug("State query: " + json.dumps(copy_of_chat + [{"role": "assistant", "content": booking_info_table}]))
+        logging.debug("Response to state query: " + json.dumps(copy_of_chat + [{"role": "assistant", "content": booking_info_table}]))
 
         return booking_info_table
 

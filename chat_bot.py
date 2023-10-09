@@ -113,5 +113,5 @@ class ChatBot:
         {"Do you wish to confirm the booking?" if missing_information is None else ''}
         </template>
         """
-        logging.debug("Booking summary: " + summary)
+        logging.debug("Booking summary template: " + summary)
         return summary
