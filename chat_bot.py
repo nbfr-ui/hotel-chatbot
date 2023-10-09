@@ -35,7 +35,7 @@ class ChatBot:
         """This method receives the chat history and generates a chat response"""
         logging.info(f"Enter continue_chat")
 
-        state = self.state_extractor.query_state(messages,  self.chat_gpt_adapter)
+        state = self.state_extractor.query_state(messages, self.chat_gpt_adapter)
 
         system_text = f"""{self._create_instruction_prompt(state)}
             This is some context information about the hotel: 
@@ -49,13 +49,18 @@ class ChatBot:
 
         missing_information = self._find_missing_info(state)
         if missing_information is not None:
+            msg = f"Do not show the booking summary yet, because there is missing information, for instance '{missing_information}'."
+            price = calculate_price(state)
+            if price is not None:
+                msg += f" The total price for booking is {price}. If the user asks for the price you can display this value."
             msg_temp += [{"role": "system",
-                          "content": f"Do not show the booking summary yet, because there is missing information, for instance '{missing_information}'"}]
+                          "content": msg}]
+            logging.debug("Additional instruction: " + msg)
 
-        next_response_from_bot = self.chat_gpt_adapter.chat_completion(msg_temp, None, 0.5,
+        next_response_from_bot = self.chat_gpt_adapter.chat_completion(msg_temp, 0.25,
                                                                        self.chat_gpt_adapter.booking_model)
 
-        chat_control_msg = self.control_flow_manager.handle_state(state)
+        chat_control_msg = self.control_flow_manager.handle_state(state, missing_information)
 
         if chat_control_msg.msg_to_user is not None:
             return {'text': chat_control_msg.msg_to_user, 'flag': chat_control_msg.flag}
@@ -86,12 +91,11 @@ class ChatBot:
     def _create_booking_summary_msg(self, state: State) -> str:
         """Creates a string summarizing the booking information"""
         price = calculate_price(state)
-        price_formatted = "${:,.2f}".format(price) if price else None
         missing_information = self._find_missing_info(state)
-        price_description = price_formatted if price is not None else """
+        price_description = price if price is not None else """
         The price can not be calculated because there is missing information. 
         The date of arrival, duration of stay and number of guests is required to calculate a price"""
-        return f"""<template>
+        summary = f"""<template>
         ~ Booking summary ~ 
 
         Date of arrival: {state.date_of_arrival.raw_value}
@@ -108,5 +112,6 @@ class ChatBot:
 
         {"Do you wish to confirm the booking?" if missing_information is None else ''}
         </template>
-        {f"The total price for booking is " + price_formatted + ". You can show this value to the user, if asked for the price." if price is not None else ''}
         """
+        logging.debug("Booking summary: " + summary)
+        return summary

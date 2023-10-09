@@ -20,7 +20,7 @@ class ControlFlowManager:
     or do nothing"""
     booking_information_validator = BookingInformationValidator()
 
-    def handle_state(self, state: State) -> ChatControlMsg:
+    def handle_state(self, state: State, missing_information: str | None) -> ChatControlMsg:
         """Performs validation and analyses the chat state. It returns a dictionary
         that can contain a chat message to the user."""
         logging.info(f"Enter handle_state")
@@ -36,7 +36,7 @@ class ControlFlowManager:
 
         response = ChatControlMsg()
 
-        if user_just_confirmed_booking:
+        if user_just_confirmed_booking and not missing_information:
             logging.info("Mock booking performed")
             response.msg_to_user = f"Thank you for choosing our hotel. A booking confirmation was sent to {state.email_address.raw_value}. Have a great day!"
             response.flag = 'booking_finished'

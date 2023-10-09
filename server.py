@@ -1,3 +1,4 @@
+import json
 import logging
 
 import docker
@@ -7,7 +8,6 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from chat_bot import ChatBot
-from session_info import SessionInfo
 
 app = FastAPI()
 chat_bot = ChatBot()
@@ -23,8 +23,8 @@ class TextResponse(BaseModel):
     flag: None | str
 
 
+# session_store caches the chat history for each session
 session_store = {}
-
 
 @app.post("/chat/", response_model=TextResponse)
 async def send_msg(msg: Message):
@@ -34,13 +34,13 @@ async def send_msg(msg: Message):
         return {'text': "Your message is too long. Please provide a shorter text", 'flag': None}
 
     if msg.sessionId not in session_store:
-        session_store[msg.sessionId] = SessionInfo()
-    session_info = session_store[msg.sessionId]
-    session_msg = session_info.messages
+        session_store[msg.sessionId] = []
+    session_msg = session_store[msg.sessionId]
     session_msg.append({"role": "user", "content": msg.text})
 
-    response = chat_bot.continue_chat(session_info, session_info.messages)
+    response = chat_bot.continue_chat(session_msg)
     session_msg.append({"role": "assistant", "content": response['text']})
+    logging.info(json.dumps(session_msg))
     logging.info(f"/chat: response: {response}")
     return response
 
