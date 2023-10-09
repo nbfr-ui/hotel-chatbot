@@ -2,6 +2,7 @@ from state import State
 
 
 def calculate_price(state: State) -> int | None:
+    """Returns the price for booking the hotel"""
     if state.duration_of_stay.value is None or state.number_of_guests.value is None:
         return None
     price_per_night = 100

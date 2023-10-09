@@ -4,8 +4,8 @@ import logging
 from chat_gpt_adapter import ChatGptAdapter
 from control_flow_manager import ControlFlowManager
 from price_calculator import calculate_price
-from session_info import SessionInfo
 from state import State
+from state_extractor import StateExtractor
 
 # this text provides context information about to hotel
 hotel_information = """Name of the hotel: Hotel Royal
@@ -26,19 +26,18 @@ class ChatBot:
 
     control_flow_manager = ControlFlowManager()
     chat_gpt_adapter = ChatGptAdapter()
+    state_extractor = StateExtractor()
 
     def continue_chat(
             self,
-            session_info: SessionInfo,
             messages: list,
     ) -> dict:
         """This method receives the chat history and generates a chat response"""
         logging.info(f"Enter continue_chat")
 
-        session_info.state = self.control_flow_manager.extract_state(messages, None,
-                                                                     self.chat_gpt_adapter)
+        state = self.state_extractor.query_state(messages,  self.chat_gpt_adapter)
 
-        system_text = f"""{self._create_instruction_prompt(session_info.state)}
+        system_text = f"""{self._create_instruction_prompt(state)}
             This is some context information about the hotel: 
             {hotel_information}
             The current date and time is {datetime.datetime.now()}."""
@@ -48,7 +47,7 @@ class ChatBot:
                         "content": f"Hi there! Would you like to book a hotel room? When do you arrive?"},
                    ] + messages
 
-        missing_information = self._find_missing_info(session_info.state)
+        missing_information = self._find_missing_info(state)
         if missing_information is not None:
             msg_temp += [{"role": "system",
                           "content": f"Do not show the booking summary yet, because there is missing information, for instance '{missing_information}'"}]
@@ -56,19 +55,17 @@ class ChatBot:
         next_response_from_bot = self.chat_gpt_adapter.chat_completion(msg_temp, None, 0.5,
                                                                        self.chat_gpt_adapter.booking_model)
 
-        chat_control_msg = self.control_flow_manager.handle_state(session_info.state)
+        chat_control_msg = self.control_flow_manager.handle_state(state)
 
         if chat_control_msg.msg_to_user is not None:
             return {'text': chat_control_msg.msg_to_user, 'flag': chat_control_msg.flag}
         return {'text': next_response_from_bot.content, 'flag': None}
-
 
     def _find_missing_info(self, state: State) -> str:
         """Returns the label of any missing mandatory field"""
         missing = list(filter(lambda entry: entry.value is None and entry.mandatory,
                               state.__dict__.values()))
         return missing[0].label if len(missing) > 0 else None
-
 
     def _create_instruction_prompt(self, state: State):
         return f"""You are a hotel booking assistant. 

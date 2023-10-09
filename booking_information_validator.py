@@ -15,7 +15,7 @@ error_msg = {
 
 
 class BookingInformationValidator:
-    """The validator ensures that an error message is sent if a value could not be extracted or is invalid.
+    """The validator ensures that an error message is returned if a value could not be extracted or is invalid.
     E.g. foo@bla -> invalid email"""
 
     def has_extraction_failed(self, state_entry: StateEntry):

@@ -33,20 +33,16 @@ Start the application by opening a browser and navigating to http://localhost:80
 The application uses two separate models. 
 The standard ChatGPT model and a fine-tuned model trained to returned structured data from chatbot.
 
-You can run fine-tuning executing the following commands:
+You can run fine-tuning executing the following command:
 ```
 import openai
 
 openai.api_key_path = './openapi.key'
-response = openai.File.create(
+file_info = openai.File.create(
   file=open("./training/structured-output.jsonl", "rb"),
   purpose='fine-tune'
 )
-```
-
-Then use the file id returned
-```
-openai.FineTuningJob.create(training_file="FILE_ID_GOES_HERE", model="gpt-3.5-turbo", hyperparameters={ "n_epochs": 1 })
+job_info = openai.FineTuningJob.create(training_file=file_info['id'], model="gpt-3.5-turbo", hyperparameters={ "n_epochs": 2 })
 ```
 
 You can check the state of training using the returned job id:
@@ -54,5 +50,6 @@ You can check the state of training using the returned job id:
 openai.FineTuningJob.retrieve("ftjob-XYZ")
 ```
 
-Oce the job has finished you can use the model when calling the ChatGPT api.
+Oce the job has finished you can use the model
+when calling the ChatGPT API.
 

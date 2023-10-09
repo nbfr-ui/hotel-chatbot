@@ -20,7 +20,7 @@ class ChatGptAdapter:
     """Implements an adapter to the ChatGPT API"""
 
     booking_model = "gpt-3.5-turbo-0613"
-    structured_query_model = "ft:gpt-3.5-turbo-0613:personal::87KC7xOH"
+    structured_query_model = "ft:gpt-3.5-turbo-0613:personal::87fl6OLL"
 
     def _try_chat_completion(self, messages, functions, temperature, model) -> ChatGPTResponse:
         # openAI expects to find a file openapi.key in the root folder of the project containing the API key
@@ -44,7 +44,7 @@ class ChatGptAdapter:
                           max_tries=2)
     def _chat_completion_with_timeout(self, messages, functions, temperature, model) -> ChatGPTResponse:
         """ Sadly, chatGPT 'hangs' sometimes and there is no response for many minutes
-        As a workaround for this issue a request is aborted after 10 seconds and a retry performed.s
+        As a workaround for this issue a request is aborted after some seconds and a retry performed.s
         """
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future = executor.submit(partial(self._try_chat_completion, messages, functions, temperature, model))
