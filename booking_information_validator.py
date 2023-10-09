@@ -18,12 +18,9 @@ class BookingInformationValidator:
     """The validator ensures that an error message is returned if a value could not be extracted or is invalid.
     E.g. foo@bla -> invalid email"""
 
-    def has_extraction_failed(self, state_entry: StateEntry):
-        return state_entry.raw_value is not None and state_entry.value is None
-
     def validate(self, state: State) -> dict:
         for attribute, entry in state.__dict__.items():
-            if attribute in error_msg and self.has_extraction_failed(entry):
+            if attribute in error_msg and self.__has_extraction_failed(entry):
                 return {'has_error': True, 'error_msg': error_msg[attribute]['error_parsing']}
         if state.date_of_arrival.value is not None:
             parsed = parser.isoparse(state.date_of_arrival.value)
@@ -40,3 +37,6 @@ class BookingInformationValidator:
                 state.duration_of_stay.value):
             return {'has_error': True, 'error_msg': 'The duration of stay must be a whole number of nights.'}
         return {'has_error': False, 'error_msg': None}
+
+    def __has_extraction_failed(self, state_entry: StateEntry):
+        return state_entry.raw_value is not None and state_entry.value is None

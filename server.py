@@ -26,6 +26,7 @@ class TextResponse(BaseModel):
 # session_store caches the chat history for each session
 session_store = {}
 
+
 @app.post("/chat/", response_model=TextResponse)
 async def send_msg(msg: Message):
     """Receives messages from the user and sends a text response"""
@@ -50,10 +51,10 @@ app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 def stop_any_duckling_docker_container(client):
     """Stops any docker containers created fromm the rasa/duckling image which might still be running"""
-    for container in client.containers.list():
-        if str(container.image).find('rasa/duckling') > -1:
+    for docker_container in client.containers.list():
+        if str(docker_container.image).find('rasa/duckling') > -1:
             logging.info("Found a running rasa/duckling container. Stopping container")
-            container.stop()
+            docker_container.stop()
             logging.info("Done.")
 
 
